@@ -28,6 +28,8 @@ source:
 	firstEvent: 1
 }
 
+cosmgen: [rain, rain2]
+
 physics:
 {
 
@@ -36,11 +38,13 @@ physics:
 	rns:       { module_type: "RandomNumberSaver" }
   generator: @local::MultiPartVertex
   rain:      @local::MultiPartRain
+  rain2:      @local::MultiPartRain
  }
 
  simulate: [ rns
             , generator
             , rain
+            , rain2
             ]
  out_stream: [ out1   ]
 
@@ -57,8 +61,11 @@ physics:
 #
 
 physics.producers.generator.DebugMode    : 1
+#
+# sbnd_detectorclocks.TriggerOffsetTPC value is -200 microseconds. Add 0.8 to this 
+# to center about the 1.6 microsecond "jitter" from the beam spill width.
+physics.producers.generator.G4Time       : 200.8 # [us]
 # Based on BNB spill = 1.6us
-physics.producers.generator.G4Time       : 340.8 # [us]
 physics.producers.generator.G4TimeJitter : 1.6 # [us]
 physics.producers.generator.XRange       : [30,30]
 physics.producers.generator.YRange       : [30,30]
@@ -69,8 +76,8 @@ physics.producers.generator.MultiMin     : 2
 physics.producers.generator.ParticleParameter.PDGCode      : [[-11,11,-13,13],     [111],  [211,-211],      [2212]]
 physics.producers.generator.ParticleParameter.MinMulti     : [              1,          0,          0,           0]
 physics.producers.generator.ParticleParameter.MaxMulti     : [              1,          2,          2,           4]
-physics.producers.generator.ParticleParameter.ProbWeight   : [              1,          1,          1,           3]
-physics.producers.generator.ParticleParameter.KERange      : [     [0.05,0.8], [0.05,0.4], [0.05,0.4],  [0.05,0.4]]
+physics.producers.generator.ParticleParameter.ProbWeight   : [              3,          1,          1,           3]
+physics.producers.generator.ParticleParameter.KERange      : [     [0.0,3.0], [0.0,1.0], [0.0,1.0],  [0.0, 1.0]]
 physics.producers.generator.ParticleParameter.MomRange     : []
 
 #
@@ -78,23 +85,46 @@ physics.producers.generator.ParticleParameter.MomRange     : []
 #
 
 physics.producers.rain.DebugMode    : 1
-# Based on TPC readout window starting at -340us and readout window size is 1638.4us
-physics.producers.rain.G4Time       : 819.2 # [us]
-physics.producers.rain.G4TimeJitter : 1638.4 # [us]
+# Based on TPC readout window starting at -200 us and readout window size is 1300 us
+# See detectorclocks_sbnd.fcl and detectorproperties_sbnd.fcl
+physics.producers.rain.G4Time       : 850.0 # [us]
+physics.producers.rain.G4TimeJitter : 1700.0 # [us]
 physics.producers.rain.XRange       : [20,20]
 physics.producers.rain.YRange       : [20,20]
 physics.producers.rain.ZRange       : [20,20]
 physics.producers.rain.DirectInward : true
 physics.producers.rain.TPCRange     : [[0,0],[0,1]]
-physics.producers.rain.MultiMax     : 15
-physics.producers.rain.MultiMin     : 8
+physics.producers.rain.MultiMax     : 4
+physics.producers.rain.MultiMin     : 2
 physics.producers.rain.CosmicDistribution : false
-physics.producers.rain.ParticleParameter.PDGCode      : [   [-13,13],     [11,22],     [2212]]
-physics.producers.rain.ParticleParameter.MinMulti     : [          0,           0,          0]
-physics.producers.rain.ParticleParameter.MaxMulti     : [         15,           5,         15]
-physics.producers.rain.ParticleParameter.ProbWeight   : [          5,           1,          1]
-physics.producers.rain.ParticleParameter.KERange      : [ [0.05,1.0],   [0.05,0.1], [0.05,0.4]]
+physics.producers.rain.ParticleParameter.PDGCode      : [   [-13,13], [-13,13],    [11,-11],   [22],       [2212]]
+physics.producers.rain.ParticleParameter.MinMulti     : [          0,        0,           0,      0,            0]
+physics.producers.rain.ParticleParameter.MaxMulti     : [          5,        5,           2,      3,            5]
+physics.producers.rain.ParticleParameter.ProbWeight   : [          5,        5,           1,      2,            1]
+physics.producers.rain.ParticleParameter.KERange      : [ [0.0,20.0], [0.0,2.0],  [0.0,1.0], [0.0,1.0], [0.0,1.0]]
 physics.producers.rain.ParticleParameter.MomRange     : []
+
+physics.producers.rain2.DebugMode    : 2
+# Based on TPC readout window starting at -200 us and readout window size is 1300 us
+# See detectorclocks_sbnd.fcl and detectorproperties_sbnd.fcl
+physics.producers.rain.G4Time       : 850.0 # [us]
+physics.producers.rain.G4TimeJitter : 1700.0 # [us]
+physics.producers.rain2.XRange       : [20,20]
+physics.producers.rain2.YRange       : [20,20]
+physics.producers.rain2.ZRange       : [20,20]
+physics.producers.rain2.DirectInward : true
+physics.producers.rain2.TPCRange      : [[0,0],[0,1]]
+physics.producers.rain2.MultiMax     : 5
+physics.producers.rain2.MultiMin     : 3
+physics.producers.rain2.CosmicDistribution : false
+physics.producers.rain2.ParticleParameter.PDGCode      : [   [-13,13], [-13,13],    [11,-11],   [22],       [2212]]
+physics.producers.rain2.ParticleParameter.MinMulti     : [          0,        0,           0,      0,            0]
+physics.producers.rain2.ParticleParameter.MaxMulti     : [          5,        5,           2,      3,            5]
+physics.producers.rain2.ParticleParameter.ProbWeight   : [          5,        5,           1,      2,            1]
+physics.producers.rain2.ParticleParameter.KERange      : [ [0.0,20.0], [0.0,2.0],  [0.0,1.0], [0.0,1.0], [0.0,1.0]]
+physics.producers.rain2.ParticleParameter.MomRange     : []
+physics.producers.rain2.MPVLabel: "generator"
+physics.producers.rain2.MPVBoxSize: 270.4 #230.4
 
 # block to define where the output goes.  if you defined a filter in the physics
 # block and put it in the trigger_paths then you need to put a SelectEvents: {SelectEvents: [XXX]}
