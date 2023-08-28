@@ -2,6 +2,8 @@
 #bcarlson1@ufl.edu
 
 #include "cluster_sbnd.fcl"
+#include "cluster_sbn.fcl"
+##include "cluster_icarus.fcl"
 #include "services_sbnd.fcl"
 ##include "reco_sbnd.fcl"
 #include "simulationservices_sbnd.fcl"
@@ -26,7 +28,7 @@ physics:
  producers:
  {
    rns:      { module_type: "RandomNumberSaver" }
-   cluster3d:  @local::standard_cluster3d
+   cluster3d:  @local::sbn_cluster3d
  }
  analyzers:
  { supera: {
